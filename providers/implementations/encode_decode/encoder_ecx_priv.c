@@ -47,7 +47,7 @@ struct ecx_priv_ctx_st {
 /* Private key : context */
 static void *ecx_priv_newctx(void *provctx, ECX_KEY_TYPE type)
 {
-    struct ecx_priv_ctx_st *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL) {
         ctx->provctx = provctx;
@@ -81,7 +81,7 @@ static void *ed448_priv_newctx(void *provctx)
 
 static void ecx_priv_freectx(void *vctx)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
 
     EVP_CIPHER_free(ctx->sc.cipher);
     OPENSSL_free(ctx->sc.cipher_pass);
@@ -101,7 +101,7 @@ static const OSSL_PARAM *ecx_priv_settable_ctx_params(ossl_unused void *provctx)
 
 static int ecx_priv_set_ctx_params(void *vctx, const OSSL_PARAM params[])
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     const OSSL_PARAM *p;
 
     p = OSSL_PARAM_locate_const(params, OSSL_ENCODER_PARAM_CIPHER);
@@ -114,7 +114,7 @@ static int ecx_priv_set_ctx_params(void *vctx, const OSSL_PARAM params[])
             return 0;
         if (propsp != NULL && propsp->data_type != OSSL_PARAM_UTF8_STRING)
             return 0;
-        props = (propsp != NULL ? propsp->data : NULL);
+        props = (const char *)(propsp != NULL ? propsp->data : NULL);
 
         EVP_CIPHER_free(ctx->sc.cipher);
         ctx->sc.cipher_intent = p->data != NULL;
@@ -139,7 +139,7 @@ static int ecx_priv_der_data(void *vctx, const OSSL_PARAM params[],
                              OSSL_CORE_BIO *out,
                              OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -150,7 +150,7 @@ static int ecx_priv_der_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx->provctx)) != NULL
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx->provctx)) != NULL
             && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
             && ecx_priv_der(ctx, ecxkey, out, cb, cbarg))
             ok = 1;
@@ -162,8 +162,8 @@ static int ecx_priv_der_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_priv_der(void *vctx, void *vecxkey, OSSL_CORE_BIO *cout,
                         OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
-    ECX_KEY *ecxkey = vecxkey;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
+    ECX_KEY *ecxkey = (ECX_KEY *)vecxkey;
     int ret;
     int nid = KEYTYPE2NID(ctx->type);
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
@@ -189,7 +189,7 @@ static int ecx_priv_pem_data(void *vctx, const OSSL_PARAM params[],
                              OSSL_CORE_BIO *out,
                              OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -200,7 +200,7 @@ static int ecx_priv_pem_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx->provctx)) != NULL
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx->provctx)) != NULL
             && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
             && ecx_priv_pem(ctx->provctx, ecxkey, out, cb, cbarg))
             ok = 1;
@@ -212,7 +212,7 @@ static int ecx_priv_pem_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_priv_pem(void *vctx, void *ecxkey, OSSL_CORE_BIO *cout,
                         OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     int ret;
     int nid = KEYTYPE2NID(ctx->type);
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
@@ -237,7 +237,7 @@ static int ecx_priv_print_data(void *vctx, const OSSL_PARAM params[],
                                OSSL_CORE_BIO *out,
                                OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -248,7 +248,7 @@ static int ecx_priv_print_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx->provctx)) != NULL
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx->provctx)) != NULL
             && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
             && ecx_priv_print(ctx, ecxkey, out, cb, cbarg))
             ok = 1;
@@ -260,7 +260,7 @@ static int ecx_priv_print_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_priv_print(void *vctx, void *ecxkey, OSSL_CORE_BIO *cout,
                           OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_priv_ctx_st *ctx = vctx;
+    struct ecx_priv_ctx_st *ctx = (struct ecx_priv_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 

@@ -102,7 +102,7 @@ int ossl_prov_prepare_dsa_params(const void *dsa, int nid,
         return 0;
     }
 
-    params->length = i2d_DSAparams(dsa, &params->data);
+    params->length = i2d_DSAparams((const DSA *)dsa, &params->data);
 
     if (params->length <= 0) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
@@ -118,9 +118,9 @@ int ossl_prov_prepare_dsa_params(const void *dsa, int nid,
 int ossl_prov_prepare_all_dsa_params(const void *dsa, int nid,
                                      void **pstr, int *pstrtype)
 {
-    const BIGNUM *p = DSA_get0_p(dsa);
-    const BIGNUM *q = DSA_get0_q(dsa);
-    const BIGNUM *g = DSA_get0_g(dsa);
+    const BIGNUM *p = DSA_get0_p((const DSA *)dsa);
+    const BIGNUM *q = DSA_get0_q((const DSA *)dsa);
+    const BIGNUM *g = DSA_get0_g((const DSA *)dsa);
 
     if (p != NULL && q != NULL && g != NULL)
         return ossl_prov_prepare_dsa_params(dsa, nid, pstr, pstrtype);

@@ -476,7 +476,7 @@ int OSSL_STORE_close(OSSL_STORE_CTX *ctx)
  */
 static OSSL_STORE_INFO *store_info_new(int type, void *data)
 {
-    OSSL_STORE_INFO *info = OPENSSL_zalloc(sizeof(*info));
+    OSSL_STORE_INFO *info = (OSSL_STORE_INFO *)OPENSSL_zalloc(sizeof(*info));
 
     if (info == NULL)
         return NULL;
@@ -780,7 +780,7 @@ int OSSL_STORE_supports_search(OSSL_STORE_CTX *ctx, int search_type)
 /* Search term constructors */
 OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_name(X509_NAME *name)
 {
-    OSSL_STORE_SEARCH *search = OPENSSL_zalloc(sizeof(*search));
+    OSSL_STORE_SEARCH *search = (OSSL_STORE_SEARCH *)OPENSSL_zalloc(sizeof(*search));
 
     if (search == NULL) {
         ERR_raise(ERR_LIB_OSSL_STORE, ERR_R_MALLOC_FAILURE);
@@ -795,7 +795,7 @@ OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_name(X509_NAME *name)
 OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_issuer_serial(X509_NAME *name,
                                                       const ASN1_INTEGER *serial)
 {
-    OSSL_STORE_SEARCH *search = OPENSSL_zalloc(sizeof(*search));
+    OSSL_STORE_SEARCH *search = (OSSL_STORE_SEARCH *)OPENSSL_zalloc(sizeof(*search));
 
     if (search == NULL) {
         ERR_raise(ERR_LIB_OSSL_STORE, ERR_R_MALLOC_FAILURE);
@@ -812,7 +812,7 @@ OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_key_fingerprint(const EVP_MD *digest,
                                                         const unsigned char
                                                         *bytes, size_t len)
 {
-    OSSL_STORE_SEARCH *search = OPENSSL_zalloc(sizeof(*search));
+    OSSL_STORE_SEARCH *search = (OSSL_STORE_SEARCH *)OPENSSL_zalloc(sizeof(*search));
 
     if (search == NULL) {
         ERR_raise(ERR_LIB_OSSL_STORE, ERR_R_MALLOC_FAILURE);
@@ -836,7 +836,7 @@ OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_key_fingerprint(const EVP_MD *digest,
 
 OSSL_STORE_SEARCH *OSSL_STORE_SEARCH_by_alias(const char *alias)
 {
-    OSSL_STORE_SEARCH *search = OPENSSL_zalloc(sizeof(*search));
+    OSSL_STORE_SEARCH *search = (OSSL_STORE_SEARCH *)OPENSSL_zalloc(sizeof(*search));
 
     if (search == NULL) {
         ERR_raise(ERR_LIB_OSSL_STORE, ERR_R_MALLOC_FAILURE);

@@ -42,7 +42,7 @@ struct ecx_pub_ctx_st {
 /* Public key : context */
 static void *ecx_pub_newctx(void *provctx, ECX_KEY_TYPE type)
 {
-    struct ecx_pub_ctx_st *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL) {
         ctx->provctx = provctx;
@@ -81,7 +81,7 @@ static int ecx_pub_der_data(void *vctx, const OSSL_PARAM params[],
                             OSSL_CORE_BIO *out,
                             OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -104,7 +104,7 @@ static int ecx_pub_der_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_pub_der(void *vctx, void *ecxkey, OSSL_CORE_BIO *cout,
                        OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 
@@ -125,7 +125,7 @@ static int ecx_pub_pem_data(void *vctx, const OSSL_PARAM params[],
                             OSSL_CORE_BIO *out,
                             OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -148,7 +148,7 @@ static int ecx_pub_pem_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_pub_pem(void *vctx, void *ecxkey, OSSL_CORE_BIO *cout,
                        OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 
@@ -168,7 +168,7 @@ static int ecx_pub_print_data(void *vctx, const OSSL_PARAM params[],
                               OSSL_CORE_BIO *out,
                               OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *ecx_new;
     OSSL_FUNC_keymgmt_free_fn *ecx_free;
     OSSL_FUNC_keymgmt_import_fn *ecx_import;
@@ -191,7 +191,7 @@ static int ecx_pub_print_data(void *vctx, const OSSL_PARAM params[],
 static int ecx_pub_print(void *vctx, void *ecxkey, OSSL_CORE_BIO *cout,
                          OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct ecx_pub_ctx_st *ctx = vctx;
+    struct ecx_pub_ctx_st *ctx = (struct ecx_pub_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 

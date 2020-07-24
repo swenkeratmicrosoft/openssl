@@ -102,7 +102,7 @@ int ossl_prov_print_ecx(BIO *out, ECX_KEY *ecxkey, enum ecx_print_type type)
 
 int ossl_prov_ecx_pub_to_der(const void *vecxkey, unsigned char **pder)
 {
-    const ECX_KEY *ecxkey = vecxkey;
+    const ECX_KEY *ecxkey = (const ECX_KEY *)vecxkey;
     unsigned char *keyblob;
 
     if (ecxkey == NULL) {
@@ -110,19 +110,19 @@ int ossl_prov_ecx_pub_to_der(const void *vecxkey, unsigned char **pder)
         return 0;
     }
 
-    keyblob = OPENSSL_memdup(ecxkey->pubkey, ecxkey->keylen);
+    keyblob = (unsigned char *)OPENSSL_memdup(ecxkey->pubkey, ecxkey->keylen);
     if (keyblob == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
         return 0;
     }
 
     *pder = keyblob;
-    return ecxkey->keylen;
+    return (int)ecxkey->keylen;
 }
 
 int ossl_prov_ecx_priv_to_der(const void *vecxkey, unsigned char **pder)
 {
-    const ECX_KEY *ecxkey = vecxkey;
+    const ECX_KEY *ecxkey = (const ECX_KEY *)vecxkey;
     ASN1_OCTET_STRING oct;
     int keybloblen;
 

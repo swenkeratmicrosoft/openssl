@@ -98,7 +98,7 @@ static void *kdf_tls1_prf_new(void *provctx)
 {
     TLS1_PRF *ctx;
 
-    if ((ctx = OPENSSL_zalloc(sizeof(*ctx))) == NULL)
+    if ((ctx = (TLS1_PRF *)OPENSSL_zalloc(sizeof(*ctx))) == NULL)
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
     ctx->provctx = provctx;
     return ctx;
@@ -154,7 +154,7 @@ static int kdf_tls1_prf_derive(void *vctx, unsigned char *key,
 static int kdf_tls1_prf_set_ctx_params(void *vctx, const OSSL_PARAM params[])
 {
     const OSSL_PARAM *p;
-    TLS1_PRF *ctx = vctx;
+    TLS1_PRF *ctx = (TLS1_PRF *)vctx;
     OPENSSL_CTX *libctx = PROV_LIBRARY_CONTEXT_OF(ctx->provctx);
 
     if ((p = OSSL_PARAM_locate_const(params, OSSL_KDF_PARAM_DIGEST)) != NULL) {
@@ -375,7 +375,7 @@ static int tls1_prf_alg(EVP_MAC_CTX *mdctx, EVP_MAC_CTX *sha1ctx,
                              seed, seed_len, out, olen))
             return 0;
 
-        if ((tmp = OPENSSL_malloc(olen)) == NULL) {
+        if ((tmp = (unsigned char *)OPENSSL_malloc(olen)) == NULL) {
             ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
             return 0;
         }

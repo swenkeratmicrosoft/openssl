@@ -53,7 +53,7 @@ static void *kdf_sshkdf_new(void *provctx)
 {
     KDF_SSHKDF *ctx;
 
-    if ((ctx = OPENSSL_zalloc(sizeof(*ctx))) == NULL)
+    if ((ctx = (KDF_SSHKDF *)OPENSSL_zalloc(sizeof(*ctx))) == NULL)
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
     ctx->provctx = provctx;
     return ctx;
@@ -125,7 +125,7 @@ static int kdf_sshkdf_derive(void *vctx, unsigned char *key,
 static int kdf_sshkdf_set_ctx_params(void *vctx, const OSSL_PARAM params[])
 {
     const OSSL_PARAM *p;
-    KDF_SSHKDF *ctx = vctx;
+    KDF_SSHKDF *ctx = (KDF_SSHKDF *)vctx;
     OPENSSL_CTX *provctx = PROV_LIBRARY_CONTEXT_OF(ctx->provctx);
     int t;
 

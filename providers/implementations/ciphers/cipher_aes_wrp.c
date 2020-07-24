@@ -49,7 +49,7 @@ typedef struct prov_aes_wrap_ctx_st {
 static void *aes_wrap_newctx(size_t kbits, size_t blkbits,
                              size_t ivbits, unsigned int mode, uint64_t flags)
 {
-    PROV_AES_WRAP_CTX *wctx = OPENSSL_zalloc(sizeof(*wctx));
+    PROV_AES_WRAP_CTX *wctx = (PROV_AES_WRAP_CTX *)OPENSSL_zalloc(sizeof(*wctx));
     PROV_CIPHER_CTX *ctx = (PROV_CIPHER_CTX *)wctx;
 
     if (ctx != NULL) {
@@ -141,14 +141,14 @@ static int aes_wrap_cipher_internal(void *vctx, unsigned char *out,
             if (pad)
                 inlen = (inlen + 7) / 8 * 8;
             /* 8 byte prefix */
-            return inlen + 8;
+            return (int)(inlen + 8);
         } else {
             /*
              * If not padding output will be exactly 8 bytes smaller than
              * input. If padding it will be at least 8 bytes smaller but we
              * don't know how much.
              */
-            return inlen - 8;
+            return (int)(inlen - 8);
         }
     }
 

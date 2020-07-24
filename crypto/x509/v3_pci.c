@@ -137,8 +137,8 @@ static int process_pci_value(CONF_VALUE *val,
                 goto err;
             }
 
-            tmp_data = OPENSSL_realloc((*policy)->data,
-                                       (*policy)->length + val_len + 1);
+            tmp_data = (unsigned char *)OPENSSL_realloc((*policy)->data,
+                                                        (*policy)->length + val_len + 1);
             if (tmp_data) {
                 (*policy)->data = tmp_data;
                 memcpy(&(*policy)->data[(*policy)->length],
@@ -173,8 +173,8 @@ static int process_pci_value(CONF_VALUE *val,
                 if (!n)
                     continue;
 
-                tmp_data = OPENSSL_realloc((*policy)->data,
-                                           (*policy)->length + n + 1);
+                tmp_data = (unsigned char *)OPENSSL_realloc((*policy)->data,
+                                                            (*policy)->length + n + 1);
 
                 if (!tmp_data) {
                     OPENSSL_free((*policy)->data);
@@ -200,9 +200,9 @@ static int process_pci_value(CONF_VALUE *val,
                 goto err;
             }
         } else if (strncmp(val->value, "text:", 5) == 0) {
-            val_len = strlen(val->value + 5);
-            tmp_data = OPENSSL_realloc((*policy)->data,
-                                       (*policy)->length + val_len + 1);
+            val_len = (int)strlen(val->value + 5);
+            tmp_data = (unsigned char *)OPENSSL_realloc((*policy)->data,
+                                                        (*policy)->length + val_len + 1);
             if (tmp_data) {
                 (*policy)->data = tmp_data;
                 memcpy(&(*policy)->data[(*policy)->length],

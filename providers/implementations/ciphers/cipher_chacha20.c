@@ -43,7 +43,7 @@ void chacha20_initctx(PROV_CHACHA20_CTX *ctx)
 
 static void *chacha20_newctx(void *provctx)
 {
-     PROV_CHACHA20_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));
+     PROV_CHACHA20_CTX *ctx = (PROV_CHACHA20_CTX *)OPENSSL_zalloc(sizeof(*ctx));
 
      if (ctx != NULL)
          chacha20_initctx(ctx);

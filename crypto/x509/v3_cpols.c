@@ -206,7 +206,7 @@ static POLICYINFO *policy_section(X509V3_CTX *ctx,
             if ((qual->d.cpsuri = ASN1_IA5STRING_new()) == NULL)
                 goto merr;
             if (!ASN1_STRING_set(qual->d.cpsuri, cnf->value,
-                                 strlen(cnf->value)))
+                                 (int)strlen(cnf->value)))
                 goto merr;
         } else if (!v3_name_cmp(cnf->name, "userNotice")) {
             STACK_OF(CONF_VALUE) *unot;
@@ -256,7 +256,7 @@ static int displaytext_get_tag_len(const char *tagstr)
 {
     char *colon = strchr(tagstr, ':');
 
-    return (colon == NULL) ? -1 : colon - tagstr;
+    return (colon == NULL) ? -1 : (int)(colon - tagstr);
 }
 
 static int displaytext_str2tag(const char *tagstr, unsigned int *tag_len)
@@ -314,7 +314,7 @@ static POLICYQUALINFO *notice_section(X509V3_CTX *ctx,
                 goto merr;
             if (tag_len != 0)
                 value += tag_len + 1;
-            len = strlen(value);
+            len = (int)strlen(value);
             if (!ASN1_STRING_set(not->exptext, value, len))
                 goto merr;
         } else if (strcmp(cnf->name, "organization") == 0) {
@@ -331,7 +331,7 @@ static POLICYQUALINFO *notice_section(X509V3_CTX *ctx,
             else
                 nref->organization->type = V_ASN1_VISIBLESTRING;
             if (!ASN1_STRING_set(nref->organization, cnf->value,
-                                 strlen(cnf->value)))
+                                 (int)strlen(cnf->value)))
                 goto merr;
         } else if (strcmp(cnf->name, "noticeNumbers") == 0) {
             NOTICEREF *nref;

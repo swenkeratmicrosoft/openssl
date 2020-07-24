@@ -35,7 +35,7 @@ static void rc4_freectx(void *vctx)
 static void *rc4_dupctx(void *ctx)
 {
     PROV_RC4_CTX *in = (PROV_RC4_CTX *)ctx;
-    PROV_RC4_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_RC4_CTX *ret = (PROV_RC4_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
@@ -56,7 +56,8 @@ static int alg##_##kbits##_get_params(OSSL_PARAM params[])                     \
 static OSSL_FUNC_cipher_newctx_fn alg##_##kbits##_newctx;                      \
 static void * alg##_##kbits##_newctx(void *provctx)                            \
 {                                                                              \
-     PROV_##UCALG##_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));                   \
+     PROV_##UCALG##_CTX *ctx = (PROV_##UCALG##_CTX *)                          \
+         OPENSSL_zalloc(sizeof(*ctx));                                         \
      if (ctx != NULL) {                                                        \
          cipher_generic_initkey(ctx, kbits, blkbits, ivbits, 0, flags,         \
                                 PROV_CIPHER_HW_##alg(kbits), NULL);            \

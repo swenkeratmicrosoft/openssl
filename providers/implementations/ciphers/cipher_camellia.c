@@ -32,7 +32,7 @@ static void camellia_freectx(void *vctx)
 static void *camellia_dupctx(void *ctx)
 {
     PROV_CAMELLIA_CTX *in = (PROV_CAMELLIA_CTX *)ctx;
-    PROV_CAMELLIA_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_CAMELLIA_CTX *ret = (PROV_CAMELLIA_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);

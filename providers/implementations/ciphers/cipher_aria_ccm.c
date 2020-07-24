@@ -16,7 +16,7 @@ static OSSL_FUNC_cipher_freectx_fn aria_ccm_freectx;
 
 static void *aria_ccm_newctx(void *provctx, size_t keybits)
 {
-    PROV_ARIA_CCM_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    PROV_ARIA_CCM_CTX *ctx = (PROV_ARIA_CCM_CTX *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL)
         ccm_initctx(&ctx->base, keybits, PROV_ARIA_HW_ccm(keybits));

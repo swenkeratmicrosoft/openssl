@@ -27,7 +27,7 @@
 static void *aes_siv_newctx(void *provctx, size_t keybits, unsigned int mode,
                             uint64_t flags)
 {
-    PROV_AES_SIV_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    PROV_AES_SIV_CTX *ctx = (PROV_AES_SIV_CTX *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL) {
         ctx->taglen = SIV_LEN;
@@ -53,7 +53,7 @@ static void aes_siv_freectx(void *vctx)
 static void *siv_dupctx(void *vctx)
 {
     PROV_AES_SIV_CTX *in = (PROV_AES_SIV_CTX *)vctx;
-    PROV_AES_SIV_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_AES_SIV_CTX *ret = (PROV_AES_SIV_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);

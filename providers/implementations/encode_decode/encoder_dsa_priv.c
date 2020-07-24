@@ -54,7 +54,7 @@ struct dsa_priv_ctx_st {
 /* Private key : context */
 static void *dsa_priv_newctx(void *provctx)
 {
-    struct dsa_priv_ctx_st *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL) {
         ctx->provctx = provctx;
@@ -67,7 +67,7 @@ static void *dsa_priv_newctx(void *provctx)
 
 static void dsa_priv_freectx(void *vctx)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
 
     EVP_CIPHER_free(ctx->sc.cipher);
     OPENSSL_free(ctx->sc.cipher_pass);
@@ -87,7 +87,7 @@ static const OSSL_PARAM *dsa_priv_settable_ctx_params(ossl_unused void *provctx)
 
 static int dsa_priv_set_ctx_params(void *vctx, const OSSL_PARAM params[])
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     const OSSL_PARAM *p;
 
     if ((p = OSSL_PARAM_locate_const(params, OSSL_ENCODER_PARAM_CIPHER))
@@ -100,7 +100,7 @@ static int dsa_priv_set_ctx_params(void *vctx, const OSSL_PARAM params[])
             return 0;
         if (propsp != NULL && propsp->data_type != OSSL_PARAM_UTF8_STRING)
             return 0;
-        props = (propsp != NULL ? propsp->data : NULL);
+        props = (const char *)(propsp != NULL ? propsp->data : NULL);
 
         EVP_CIPHER_free(ctx->sc.cipher);
         ctx->sc.cipher_intent = p->data != NULL;
@@ -125,7 +125,7 @@ static int dsa_priv_der_data(void *vctx, const OSSL_PARAM params[],
                              OSSL_CORE_BIO *out,
                              OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *dsa_new = ossl_prov_get_keymgmt_dsa_new();
     OSSL_FUNC_keymgmt_free_fn *dsa_free = ossl_prov_get_keymgmt_dsa_free();
     OSSL_FUNC_keymgmt_import_fn *dsa_import = ossl_prov_get_keymgmt_dsa_import();
@@ -146,7 +146,7 @@ static int dsa_priv_der_data(void *vctx, const OSSL_PARAM params[],
 static int dsa_priv_der(void *vctx, void *dsa, OSSL_CORE_BIO *cout,
                         OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 
@@ -170,7 +170,7 @@ static int dsa_pem_priv_data(void *vctx, const OSSL_PARAM params[],
                              OSSL_CORE_BIO *out,
                              OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *dsa_new = ossl_prov_get_keymgmt_dsa_new();
     OSSL_FUNC_keymgmt_free_fn *dsa_free = ossl_prov_get_keymgmt_dsa_free();
     OSSL_FUNC_keymgmt_import_fn *dsa_import = ossl_prov_get_keymgmt_dsa_import();
@@ -191,7 +191,7 @@ static int dsa_pem_priv_data(void *vctx, const OSSL_PARAM params[],
 static int dsa_pem_priv(void *vctx, void *dsa, OSSL_CORE_BIO *cout,
                         OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     BIO *out = bio_new_from_core_bio(ctx->provctx, cout);
     int ret;
 
@@ -226,7 +226,7 @@ static int dsa_priv_print_data(void *vctx, const OSSL_PARAM params[],
                                OSSL_CORE_BIO *out,
                                OSSL_PASSPHRASE_CALLBACK *cb, void *cbarg)
 {
-    struct dsa_priv_ctx_st *ctx = vctx;
+    struct dsa_priv_ctx_st *ctx = (struct dsa_priv_ctx_st *)vctx;
     OSSL_FUNC_keymgmt_new_fn *dsa_new = ossl_prov_get_keymgmt_dsa_new();
     OSSL_FUNC_keymgmt_free_fn *dsa_free = ossl_prov_get_keymgmt_dsa_free();
     OSSL_FUNC_keymgmt_import_fn *dsa_import = ossl_prov_get_keymgmt_dsa_import();

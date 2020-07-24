@@ -48,7 +48,7 @@ static size_t gmac_size(void);
 
 static void gmac_free(void *vmacctx)
 {
-    struct gmac_data_st *macctx = vmacctx;
+    struct gmac_data_st *macctx = (struct gmac_data_st *)vmacctx;
 
     if (macctx != NULL) {
         EVP_CIPHER_CTX_free(macctx->ctx);
@@ -61,7 +61,7 @@ static void *gmac_new(void *provctx)
 {
     struct gmac_data_st *macctx;
 
-    if ((macctx = OPENSSL_zalloc(sizeof(*macctx))) == NULL
+    if ((macctx = (struct gmac_data_st *)OPENSSL_zalloc(sizeof(*macctx))) == NULL
         || (macctx->ctx = EVP_CIPHER_CTX_new()) == NULL) {
         gmac_free(macctx);
         return NULL;
@@ -73,8 +73,8 @@ static void *gmac_new(void *provctx)
 
 static void *gmac_dup(void *vsrc)
 {
-    struct gmac_data_st *src = vsrc;
-    struct gmac_data_st *dst = gmac_new(src->provctx);
+    struct gmac_data_st *src = (struct gmac_data_st *)vsrc;
+    struct gmac_data_st *dst = (struct gmac_data_st *)gmac_new(src->provctx);
 
     if (dst == NULL)
         return NULL;
@@ -95,7 +95,7 @@ static int gmac_init(void *vmacctx)
 static int gmac_update(void *vmacctx, const unsigned char *data,
                        size_t datalen)
 {
-    struct gmac_data_st *macctx = vmacctx;
+    struct gmac_data_st *macctx = (struct gmac_data_st *)vmacctx;
     EVP_CIPHER_CTX *ctx = macctx->ctx;
     int outlen;
 
@@ -111,7 +111,7 @@ static int gmac_update(void *vmacctx, const unsigned char *data,
 static int gmac_final(void *vmacctx, unsigned char *out, size_t *outl,
                       size_t outsize)
 {
-    struct gmac_data_st *macctx = vmacctx;
+    struct gmac_data_st *macctx = (struct gmac_data_st *)vmacctx;
     int hlen = 0;
 
     if (!EVP_EncryptFinal_ex(macctx->ctx, out, &hlen))
@@ -168,7 +168,7 @@ static const OSSL_PARAM *gmac_settable_ctx_params(ossl_unused void *provctx)
  */
 static int gmac_set_ctx_params(void *vmacctx, const OSSL_PARAM params[])
 {
-    struct gmac_data_st *macctx = vmacctx;
+    struct gmac_data_st *macctx = (struct gmac_data_st *)vmacctx;
     EVP_CIPHER_CTX *ctx = macctx->ctx;
     OPENSSL_CTX *provctx = PROV_LIBRARY_CONTEXT_OF(macctx->provctx);
     const OSSL_PARAM *p;

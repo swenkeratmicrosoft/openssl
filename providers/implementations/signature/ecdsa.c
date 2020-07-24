@@ -95,7 +95,7 @@ typedef struct {
 
 static void *ecdsa_newctx(void *provctx, const char *propq)
 {
-    PROV_ECDSA_CTX *ctx = OPENSSL_zalloc(sizeof(PROV_ECDSA_CTX));
+    PROV_ECDSA_CTX *ctx = (PROV_ECDSA_CTX *)OPENSSL_zalloc(sizeof(PROV_ECDSA_CTX));
 
     if (ctx == NULL)
         return NULL;
@@ -334,7 +334,7 @@ static void *ecdsa_dupctx(void *vctx)
     PROV_ECDSA_CTX *srcctx = (PROV_ECDSA_CTX *)vctx;
     PROV_ECDSA_CTX *dstctx;
 
-    dstctx = OPENSSL_zalloc(sizeof(*srcctx));
+    dstctx = (PROV_ECDSA_CTX *)OPENSSL_zalloc(sizeof(*srcctx));
     if (dstctx == NULL)
         return NULL;
 

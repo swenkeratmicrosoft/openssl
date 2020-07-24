@@ -99,7 +99,7 @@ static void *kbkdf_new(void *provctx)
 {
     KBKDF *ctx;
 
-    ctx = OPENSSL_zalloc(sizeof(*ctx));
+    ctx = (KBKDF *)OPENSSL_zalloc(sizeof(*ctx));
     if (ctx == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
         return NULL;
@@ -213,7 +213,7 @@ static int kbkdf_derive(void *vctx, unsigned char *key, size_t keylen)
         goto done;
     }
 
-    k_i = OPENSSL_zalloc(h);
+    k_i = (unsigned char *)OPENSSL_zalloc(h);
     if (k_i == NULL)
         goto done;
 

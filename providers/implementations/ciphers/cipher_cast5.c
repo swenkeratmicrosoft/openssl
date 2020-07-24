@@ -35,7 +35,7 @@ static void cast5_freectx(void *vctx)
 static void *cast5_dupctx(void *ctx)
 {
     PROV_CAST_CTX *in = (PROV_CAST_CTX *)ctx;
-    PROV_CAST_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_CAST_CTX *ret = (PROV_CAST_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);

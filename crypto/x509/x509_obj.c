@@ -68,7 +68,7 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len)
             i2t_ASN1_OBJECT(tmp_buf, sizeof(tmp_buf), ne->object);
             s = tmp_buf;
         }
-        l1 = strlen(s);
+        l1 = (int)strlen(s);
 
         type = ne->value->type;
         num = ne->value->length;
@@ -153,7 +153,7 @@ char *X509_NAME_oneline(const X509_NAME *a, char *buf, int len)
                 *(p++) = hex[(n >> 4) & 0x0f];
                 *(p++) = hex[n & 0x0f];
             } else
-                *(p++) = n;
+                *(p++) = (char)n;
 #else
             n = os_toascii[q[j]];
             if ((n < os_toascii[' ']) || (n > os_toascii['~'])) {

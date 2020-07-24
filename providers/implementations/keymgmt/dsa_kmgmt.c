@@ -116,12 +116,12 @@ static void *dsa_newdata(void *provctx)
 
 static void dsa_freedata(void *keydata)
 {
-    DSA_free(keydata);
+    DSA_free((DSA *)keydata);
 }
 
 static int dsa_has(void *keydata, int selection)
 {
-    DSA *dsa = keydata;
+    DSA *dsa = (DSA *)keydata;
     int ok = 0;
 
     if (dsa != NULL) {
@@ -140,8 +140,8 @@ static int dsa_has(void *keydata, int selection)
 
 static int dsa_match(const void *keydata1, const void *keydata2, int selection)
 {
-    const DSA *dsa1 = keydata1;
-    const DSA *dsa2 = keydata2;
+    const DSA *dsa1 = (const DSA *)keydata1;
+    const DSA *dsa2 = (const DSA *)keydata2;
     int ok = 1;
 
     if ((selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) != 0)
@@ -161,7 +161,7 @@ static int dsa_match(const void *keydata1, const void *keydata2, int selection)
 
 static int dsa_import(void *keydata, int selection, const OSSL_PARAM params[])
 {
-    DSA *dsa = keydata;
+    DSA *dsa = (DSA *)keydata;
     int ok = 1;
 
     if (dsa == NULL)
@@ -181,7 +181,7 @@ static int dsa_import(void *keydata, int selection, const OSSL_PARAM params[])
 static int dsa_export(void *keydata, int selection, OSSL_CALLBACK *param_cb,
                       void *cbarg)
 {
-    DSA *dsa = keydata;
+    DSA *dsa = (DSA *)keydata;
     OSSL_PARAM_BLD *tmpl = OSSL_PARAM_BLD_new();
     OSSL_PARAM *params = NULL;
     int ok = 1;
@@ -265,7 +265,7 @@ static const OSSL_PARAM *dsa_export_types(int selection)
 
 static ossl_inline int dsa_get_params(void *key, OSSL_PARAM params[])
 {
-    DSA *dsa = key;
+    DSA *dsa = (DSA *)key;
     OSSL_PARAM *p;
 
     if ((p = OSSL_PARAM_locate(params, OSSL_PKEY_PARAM_BITS)) != NULL
@@ -331,7 +331,7 @@ static int dsa_validate_private(DSA *dsa)
 
 static int dsa_validate(void *keydata, int selection)
 {
-    DSA *dsa = keydata;
+    DSA *dsa = (DSA *)keydata;
     int ok = 0;
 
     if ((selection & DSA_POSSIBLE_SELECTIONS) != 0)
@@ -376,7 +376,7 @@ static void *dsa_gen_init(void *provctx, int selection)
 
 static int dsa_gen_set_template(void *genctx, void *templ)
 {
-    struct dsa_gen_ctx *gctx = genctx;
+    struct dsa_gen_ctx *gctx = (struct dsa_gen_ctx *)genctx;
     DSA *dsa = templ;
 
     if (gctx == NULL || dsa == NULL)
@@ -402,7 +402,7 @@ static int dsa_set_gen_seed(struct dsa_gen_ctx *gctx, unsigned char *seed,
 
 static int dsa_gen_set_params(void *genctx, const OSSL_PARAM params[])
 {
-    struct dsa_gen_ctx *gctx = genctx;
+    struct dsa_gen_ctx *gctx = (struct dsa_gen_ctx *)genctx;
     const OSSL_PARAM *p;
 
     if (gctx == NULL)
@@ -484,7 +484,7 @@ static int dsa_gencb(int p, int n, BN_GENCB *cb)
 
 static void *dsa_gen(void *genctx, OSSL_CALLBACK *osslcb, void *cbarg)
 {
-    struct dsa_gen_ctx *gctx = genctx;
+    struct dsa_gen_ctx *gctx = (struct dsa_gen_ctx *)genctx;
     DSA *dsa = NULL;
     BN_GENCB *gencb = NULL;
     int ret = 0;
@@ -551,7 +551,7 @@ end:
 
 static void dsa_gen_cleanup(void *genctx)
 {
-    struct dsa_gen_ctx *gctx = genctx;
+    struct dsa_gen_ctx *gctx = (struct dsa_gen_ctx *)genctx;
 
     if (gctx == NULL)
         return;

@@ -55,7 +55,7 @@ static void *hmac_new(void *provctx)
 {
     struct hmac_data_st *macctx;
 
-    if ((macctx = OPENSSL_zalloc(sizeof(*macctx))) == NULL
+    if ((macctx = (struct hmac_data_st *)OPENSSL_zalloc(sizeof(*macctx))) == NULL
         || (macctx->ctx = HMAC_CTX_new()) == NULL) {
         OPENSSL_free(macctx);
         return NULL;
@@ -68,7 +68,7 @@ static void *hmac_new(void *provctx)
 
 static void hmac_free(void *vmacctx)
 {
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
 
     if (macctx != NULL) {
         HMAC_CTX_free(macctx->ctx);
@@ -79,8 +79,8 @@ static void hmac_free(void *vmacctx)
 
 static void *hmac_dup(void *vsrc)
 {
-    struct hmac_data_st *src = vsrc;
-    struct hmac_data_st *dst = hmac_new(src->provctx);
+    struct hmac_data_st *src = (struct hmac_data_st *)vsrc;
+    struct hmac_data_st *dst = (struct hmac_data_st *)hmac_new(src->provctx);
 
     if (dst == NULL)
         return NULL;
@@ -95,14 +95,14 @@ static void *hmac_dup(void *vsrc)
 
 static size_t hmac_size(void *vmacctx)
 {
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
 
     return HMAC_size(macctx->ctx);
 }
 
 static int hmac_init(void *vmacctx)
 {
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
     const EVP_MD *digest = ossl_prov_digest_md(&macctx->digest);
     int rv = 1;
 
@@ -117,7 +117,7 @@ static int hmac_init(void *vmacctx)
 static int hmac_update(void *vmacctx, const unsigned char *data,
                        size_t datalen)
 {
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
 
     return HMAC_Update(macctx->ctx, data, datalen);
 }
@@ -126,7 +126,7 @@ static int hmac_final(void *vmacctx, unsigned char *out, size_t *outl,
                       size_t outsize)
 {
     unsigned int hlen;
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
 
     if (!HMAC_Final(macctx->ctx, out, &hlen))
         return 0;
@@ -170,7 +170,7 @@ static const OSSL_PARAM *hmac_settable_ctx_params(ossl_unused void *provctx)
  */
 static int hmac_set_ctx_params(void *vmacctx, const OSSL_PARAM params[])
 {
-    struct hmac_data_st *macctx = vmacctx;
+    struct hmac_data_st *macctx = (struct hmac_data_st *)vmacctx;
     OPENSSL_CTX *ctx = PROV_LIBRARY_CONTEXT_OF(macctx->provctx);
     const OSSL_PARAM *p;
 

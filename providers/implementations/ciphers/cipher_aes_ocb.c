@@ -293,7 +293,7 @@ static int aes_ocb_block_final(void *vctx, unsigned char *out, size_t *outl,
 static void *aes_ocb_newctx(void *provctx, size_t kbits, size_t blkbits,
                             size_t ivbits, unsigned int mode, uint64_t flags)
 {
-    PROV_AES_OCB_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    PROV_AES_OCB_CTX *ctx = (PROV_AES_OCB_CTX *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL) {
         cipher_generic_initkey(ctx, kbits, blkbits, ivbits, mode, flags,
@@ -317,7 +317,7 @@ static void aes_ocb_freectx(void *vctx)
 static void *aes_ocb_dupctx(void *vctx)
 {
     PROV_AES_OCB_CTX *in = (PROV_AES_OCB_CTX *)vctx;
-    PROV_AES_OCB_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_AES_OCB_CTX *ret = (PROV_AES_OCB_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);

@@ -71,7 +71,7 @@ static char *file_get_pass(const UI_METHOD *ui_method, char *pass,
         OSSL_STOREerr(OSSL_STORE_F_FILE_GET_PASS, ERR_R_MALLOC_FAILURE);
         pass = NULL;
     } else if (!UI_add_input_string(ui, prompt, UI_INPUT_FLAG_DEFAULT_PWD,
-                                    pass, 0, maxsize - 1)) {
+                                    pass, 0, (int)(maxsize - 1))) {
         OSSL_STOREerr(OSSL_STORE_F_FILE_GET_PASS, ERR_R_UI_LIB);
         pass = NULL;
     } else {
@@ -118,7 +118,7 @@ static int file_fill_pem_pass_data(struct pem_pass_data *pass_data,
 /* This is used anywhere a pem_password_cb is needed */
 static int file_get_pem_pass(char *buf, int num, int w, void *data)
 {
-    struct pem_pass_data *pass_data = data;
+    struct pem_pass_data *pass_data = (struct pem_pass_data *)data;
     char *pass = file_get_pass(pass_data->ui_method, buf, num,
                                pass_data->prompt_desc, pass_data->prompt_info,
                                pass_data->data);
@@ -217,7 +217,7 @@ static OSSL_STORE_INFO *try_decode_PKCS12(const char *pem_name,
                                           const char *propq)
 {
     OSSL_STORE_INFO *store_info = NULL;
-    STACK_OF(OSSL_STORE_INFO) *ctx = *pctx;
+    STACK_OF(OSSL_STORE_INFO) *ctx = (STACK_OF(OSSL_STORE_INFO) *)*pctx;
 
     if (ctx == NULL) {
         /* Initial parsing */
@@ -227,7 +227,7 @@ static OSSL_STORE_INFO *try_decode_PKCS12(const char *pem_name,
             /* No match, there is no PEM PKCS12 tag */
             return NULL;
 
-        if ((p12 = d2i_PKCS12(NULL, &blob, len)) != NULL) {
+        if ((p12 = d2i_PKCS12(NULL, &blob, (long)len)) != NULL) {
             char *pass = NULL;
             char tpass[PEM_BUFSIZE];
             EVP_PKEY *pkey = NULL;
@@ -316,14 +316,14 @@ static OSSL_STORE_INFO *try_decode_PKCS12(const char *pem_name,
 
 static int eof_PKCS12(void *ctx_)
 {
-    STACK_OF(OSSL_STORE_INFO) *ctx = ctx_;
+    STACK_OF(OSSL_STORE_INFO) *ctx = (STACK_OF(OSSL_STORE_INFO) *)ctx_;
 
     return ctx == NULL || sk_OSSL_STORE_INFO_num(ctx) == 0;
 }
 
 static void destroy_ctx_PKCS12(void **pctx)
 {
-    STACK_OF(OSSL_STORE_INFO) *ctx = *pctx;
+    STACK_OF(OSSL_STORE_INFO) *ctx = (STACK_OF(OSSL_STORE_INFO) *)*pctx;
 
     sk_OSSL_STORE_INFO_pop_free(ctx, OSSL_STORE_INFO_free);
     *pctx = NULL;
@@ -369,7 +369,7 @@ static OSSL_STORE_INFO *try_decode_PKCS8Encrypted(const char *pem_name,
         *matchcount = 1;
     }
 
-    if ((p8 = d2i_X509_SIG(NULL, &blob, len)) == NULL)
+    if ((p8 = d2i_X509_SIG(NULL, &blob, (long)len)) == NULL)
         return NULL;
 
     *matchcount = 1;
@@ -439,7 +439,7 @@ static OSSL_STORE_INFO *try_decode_PrivateKey(const char *pem_name,
     if (pem_name != NULL) {
         if (strcmp(pem_name, PEM_STRING_PKCS8INF) == 0) {
             PKCS8_PRIV_KEY_INFO *p8inf =
-                d2i_PKCS8_PRIV_KEY_INFO(NULL, &blob, len);
+                d2i_PKCS8_PRIV_KEY_INFO(NULL, &blob, (long)len);
 
             *matchcount = 1;
             if (p8inf != NULL)
@@ -452,7 +452,7 @@ static OSSL_STORE_INFO *try_decode_PrivateKey(const char *pem_name,
                 && (ameth = EVP_PKEY_asn1_find_str(NULL, pem_name,
                                                    slen)) != NULL) {
                 *matchcount = 1;
-                pkey = d2i_PrivateKey_ex(ameth->pkey_id, NULL, &blob, len,
+                pkey = d2i_PrivateKey_ex(ameth->pkey_id, NULL, &blob, (long)len,
                                          libctx, propq);
             }
         }
@@ -563,7 +563,7 @@ static OSSL_STORE_INFO *try_decode_PUBKEY(const char *pem_name,
         *matchcount = 1;
     }
 
-    if ((pkey = d2i_PUBKEY(NULL, &blob, len)) != NULL) {
+    if ((pkey = d2i_PUBKEY(NULL, &blob, (long)len)) != NULL) {
         *matchcount = 1;
         store_info = OSSL_STORE_INFO_new_PUBKEY(pkey);
     }
@@ -611,7 +611,7 @@ static OSSL_STORE_INFO *try_decode_params(const char *pem_name,
         if (EVP_PKEY_set_type_str(pkey, pem_name, slen)
             && (ameth = EVP_PKEY_get0_asn1(pkey)) != NULL
             && ameth->param_decode != NULL
-            && ameth->param_decode(pkey, &blob, len))
+            && ameth->param_decode(pkey, &blob, (int)len))
             ok = 1;
     } else {
         int i;
@@ -634,7 +634,7 @@ static OSSL_STORE_INFO *try_decode_params(const char *pem_name,
             if (EVP_PKEY_set_type(tmp_pkey, ameth->pkey_id)
                 && (ameth = EVP_PKEY_get0_asn1(tmp_pkey)) != NULL
                 && ameth->param_decode != NULL
-                && ameth->param_decode(tmp_pkey, &tmp_blob, len)) {
+                && ameth->param_decode(tmp_pkey, &tmp_blob, (int)len)) {
                 if (pkey != NULL)
                     EVP_PKEY_free(tmp_pkey);
                 else
@@ -705,7 +705,7 @@ static OSSL_STORE_INFO *try_decode_X509Certificate(const char *pem_name,
         return NULL;
 
     if ((d2i_X509_AUX(&cert, &blob, len)) != NULL
-        || (ignore_trusted && (d2i_X509(&cert, &blob, len)) != NULL)) {
+        || (ignore_trusted && (d2i_X509(&cert, &blob, (long)len)) != NULL)) {
         *matchcount = 1;
         store_info = OSSL_STORE_INFO_new_CERT(cert);
     }
@@ -744,7 +744,7 @@ static OSSL_STORE_INFO *try_decode_X509CRL(const char *pem_name,
         *matchcount = 1;
     }
 
-    if ((crl = d2i_X509_CRL(NULL, &blob, len)) != NULL) {
+    if ((crl = d2i_X509_CRL(NULL, &blob, (long)len)) != NULL) {
         *matchcount = 1;
         store_info = OSSL_STORE_INFO_new_CRL(crl);
     }
@@ -907,7 +907,7 @@ static OSSL_STORE_LOADER_CTX *file_open_with_libctx
 #ifdef _WIN32
         /* Windows file: URIs with a drive letter start with a / */
         if (p[0] == '/' && p[2] == ':' && p[3] == '/') {
-            char c = ossl_tolower(p[1]);
+            char c = (char)ossl_tolower(p[1]);
 
             if (c >= 'a' && c <= 'z') {
                 p++;
@@ -945,7 +945,7 @@ static OSSL_STORE_LOADER_CTX *file_open_with_libctx
 
     /* Successfully found a working path */
 
-    ctx = OPENSSL_zalloc(sizeof(*ctx));
+    ctx = (OSSL_STORE_LOADER_CTX *)OPENSSL_zalloc(sizeof(*ctx));
     if (ctx == NULL) {
         OSSL_STOREerr(0, ERR_R_MALLOC_FAILURE);
         return NULL;
@@ -1005,7 +1005,7 @@ static OSSL_STORE_LOADER_CTX *file_attach
 {
     OSSL_STORE_LOADER_CTX *ctx = NULL;
 
-    if ((ctx = OPENSSL_zalloc(sizeof(*ctx))) == NULL) {
+    if ((ctx = (OSSL_STORE_LOADER_CTX *)OPENSSL_zalloc(sizeof(*ctx))) == NULL) {
         OSSL_STOREerr(0, ERR_R_MALLOC_FAILURE);
         goto err;
     }
@@ -1115,7 +1115,7 @@ static OSSL_STORE_INFO *file_load_try_decode(OSSL_STORE_LOADER_CTX *ctx,
     {
         size_t i = 0;
         void *handler_ctx = NULL;
-        const FILE_HANDLER **matching_handlers =
+        const FILE_HANDLER **matching_handlers = (const FILE_HANDLER **)
             OPENSSL_zalloc(sizeof(*matching_handlers)
                            * OSSL_NELEM(file_handlers));
 
@@ -1175,7 +1175,7 @@ static OSSL_STORE_INFO *file_load_try_decode(OSSL_STORE_LOADER_CTX *ctx,
             ctx->_.file.last_handler_ctx = handler_ctx;
         }
 
-        OPENSSL_free(matching_handlers);
+        OPENSSL_free((FILE_HANDLER **)matching_handlers);
     }
 
  err:
@@ -1378,7 +1378,7 @@ static int file_name_to_uri(OSSL_STORE_LOADER_CTX *ctx, const char *name,
         long calculated_length = strlen(ctx->uri) + strlen(pathsep)
             + strlen(name) + 1 /* \0 */;
 
-        *data = OPENSSL_zalloc(calculated_length);
+        *data = (char *)OPENSSL_zalloc(calculated_length);
         if (*data == NULL) {
             OSSL_STOREerr(OSSL_STORE_F_FILE_NAME_TO_URI, ERR_R_MALLOC_FAILURE);
             return 0;

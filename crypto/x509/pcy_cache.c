@@ -91,7 +91,7 @@ static int policy_cache_new(X509 *x)
 
     if (x->policy_cache != NULL)
         return 1;
-    cache = OPENSSL_malloc(sizeof(*cache));
+    cache = (X509_POLICY_CACHE *)OPENSSL_malloc(sizeof(*cache));
     if (cache == NULL) {
         X509V3err(X509V3_F_POLICY_CACHE_NEW, ERR_R_MALLOC_FAILURE);
         return 0;
@@ -108,7 +108,7 @@ static int policy_cache_new(X509 *x)
      * Handle requireExplicitPolicy *first*. Need to process this even if we
      * don't have any policies.
      */
-    ext_pcons = X509_get_ext_d2i(x, NID_policy_constraints, &i, NULL);
+    ext_pcons = (POLICY_CONSTRAINTS *)X509_get_ext_d2i(x, NID_policy_constraints, &i, NULL);
 
     if (!ext_pcons) {
         if (i != -1)
@@ -127,7 +127,7 @@ static int policy_cache_new(X509 *x)
 
     /* Process CertificatePolicies */
 
-    ext_cpols = X509_get_ext_d2i(x, NID_certificate_policies, &i, NULL);
+    ext_cpols = (CERTIFICATEPOLICIES *)X509_get_ext_d2i(x, NID_certificate_policies, &i, NULL);
     /*
      * If no CertificatePolicies extension or problem decoding then there is
      * no point continuing because the valid policies will be NULL.
@@ -146,7 +146,7 @@ static int policy_cache_new(X509 *x)
     if (i <= 0)
         return i;
 
-    ext_pmaps = X509_get_ext_d2i(x, NID_policy_mappings, &i, NULL);
+    ext_pmaps = (POLICY_MAPPINGS *)X509_get_ext_d2i(x, NID_policy_mappings, &i, NULL);
 
     if (!ext_pmaps) {
         /* If not absent some problem with extension */
@@ -158,7 +158,7 @@ static int policy_cache_new(X509 *x)
             goto bad_cache;
     }
 
-    ext_any = X509_get_ext_d2i(x, NID_inhibit_any_policy, &i, NULL);
+    ext_any = (ASN1_INTEGER *)X509_get_ext_d2i(x, NID_inhibit_any_policy, &i, NULL);
 
     if (!ext_any) {
         if (i != -1)

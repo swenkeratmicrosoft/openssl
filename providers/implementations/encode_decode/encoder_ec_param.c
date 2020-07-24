@@ -55,7 +55,7 @@ static int ec_param_der_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* vctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
             && ec_import(eckey, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
             && ec_param_der(vctx, eckey, out, cb, cbarg))
             ok = 1;
@@ -95,7 +95,7 @@ static int ec_param_pem_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* vctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
             && ec_import(eckey, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
             && ec_param_pem(vctx, eckey, out, cb, cbarg))
             ok = 1;
@@ -134,7 +134,7 @@ static int ec_param_print_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* vctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
             && ec_import(eckey, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
             && ec_param_print(vctx, eckey, out, cb, cbarg))
             ok = 1;

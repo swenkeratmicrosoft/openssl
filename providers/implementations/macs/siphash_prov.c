@@ -49,7 +49,7 @@ struct siphash_data_st {
 
 static void *siphash_new(void *provctx)
 {
-    struct siphash_data_st *ctx = OPENSSL_zalloc(sizeof(*ctx));
+    struct siphash_data_st *ctx = (struct siphash_data_st *)OPENSSL_zalloc(sizeof(*ctx));
 
     if (ctx != NULL)
         ctx->provctx = provctx;
@@ -63,8 +63,8 @@ static void siphash_free(void *vmacctx)
 
 static void *siphash_dup(void *vsrc)
 {
-    struct siphash_data_st *ssrc = vsrc;
-    struct siphash_data_st *sdst = siphash_new(ssrc->provctx);
+    struct siphash_data_st *ssrc = (struct siphash_data_st *)vsrc;
+    struct siphash_data_st *sdst = (struct siphash_data_st *)siphash_new(ssrc->provctx);
 
     if (sdst == NULL)
         return NULL;
@@ -75,7 +75,7 @@ static void *siphash_dup(void *vsrc)
 
 static size_t siphash_size(void *vmacctx)
 {
-    struct siphash_data_st *ctx = vmacctx;
+    struct siphash_data_st *ctx = (struct siphash_data_st *)vmacctx;
 
     return SipHash_hash_size(&ctx->siphash);
 }
@@ -89,7 +89,7 @@ static int siphash_init(void *vmacctx)
 static int siphash_update(void *vmacctx, const unsigned char *data,
                        size_t datalen)
 {
-    struct siphash_data_st *ctx = vmacctx;
+    struct siphash_data_st *ctx = (struct siphash_data_st *)vmacctx;
 
     SipHash_Update(&ctx->siphash, data, datalen);
     return 1;
@@ -98,7 +98,7 @@ static int siphash_update(void *vmacctx, const unsigned char *data,
 static int siphash_final(void *vmacctx, unsigned char *out, size_t *outl,
                          size_t outsize)
 {
-    struct siphash_data_st *ctx = vmacctx;
+    struct siphash_data_st *ctx = (struct siphash_data_st *)vmacctx;
     size_t hlen = siphash_size(ctx);
 
     if (outsize < hlen)
@@ -139,7 +139,7 @@ static const OSSL_PARAM *siphash_settable_params(void *provctx)
 
 static int siphash_set_params(void *vmacctx, const OSSL_PARAM *params)
 {
-    struct siphash_data_st *ctx = vmacctx;
+    struct siphash_data_st *ctx = (struct siphash_data_st *)vmacctx;
     const OSSL_PARAM *p = NULL;
 
     if ((p = OSSL_PARAM_locate_const(params, OSSL_MAC_PARAM_SIZE)) != NULL) {

@@ -34,7 +34,7 @@ static void blowfish_freectx(void *vctx)
 static void *blowfish_dupctx(void *ctx)
 {
     PROV_BLOWFISH_CTX *in = (PROV_BLOWFISH_CTX *)ctx;
-    PROV_BLOWFISH_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_BLOWFISH_CTX *ret = (PROV_BLOWFISH_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);

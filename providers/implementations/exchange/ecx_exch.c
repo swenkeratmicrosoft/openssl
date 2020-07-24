@@ -42,7 +42,7 @@ typedef struct {
 
 static void *ecx_newctx(void *provctx, size_t keylen)
 {
-    PROV_ECX_CTX *ctx = OPENSSL_zalloc(sizeof(PROV_ECX_CTX));
+    PROV_ECX_CTX *ctx = (PROV_ECX_CTX *)OPENSSL_zalloc(sizeof(PROV_ECX_CTX));
 
     if (ctx == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
@@ -67,7 +67,7 @@ static void *x448_newctx(void *provctx)
 static int ecx_init(void *vecxctx, void *vkey)
 {
     PROV_ECX_CTX *ecxctx = (PROV_ECX_CTX *)vecxctx;
-    ECX_KEY *key = vkey;
+    ECX_KEY *key = (ECX_KEY *)vkey;
 
     if (ecxctx == NULL
             || key == NULL
@@ -86,7 +86,7 @@ static int ecx_init(void *vecxctx, void *vkey)
 static int ecx_set_peer(void *vecxctx, void *vkey)
 {
     PROV_ECX_CTX *ecxctx = (PROV_ECX_CTX *)vecxctx;
-    ECX_KEY *key = vkey;
+    ECX_KEY *key = (ECX_KEY *)vkey;
 
     if (ecxctx == NULL
             || key == NULL
@@ -179,7 +179,7 @@ static void *ecx_dupctx(void *vecxctx)
     PROV_ECX_CTX *srcctx = (PROV_ECX_CTX *)vecxctx;
     PROV_ECX_CTX *dstctx;
 
-    dstctx = OPENSSL_zalloc(sizeof(*srcctx));
+    dstctx = (PROV_ECX_CTX *)OPENSSL_zalloc(sizeof(*srcctx));
     if (dstctx == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
         return NULL;

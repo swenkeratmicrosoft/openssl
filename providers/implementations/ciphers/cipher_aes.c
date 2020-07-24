@@ -33,7 +33,7 @@ static void aes_freectx(void *vctx)
 static void *aes_dupctx(void *ctx)
 {
     PROV_AES_CTX *in = (PROV_AES_CTX *)ctx;
-    PROV_AES_CTX *ret = OPENSSL_malloc(sizeof(*ret));
+    PROV_AES_CTX *ret = (PROV_AES_CTX *)OPENSSL_malloc(sizeof(*ret));
 
     if (ret == NULL) {
         ERR_raise(ERR_LIB_PROV, ERR_R_MALLOC_FAILURE);
