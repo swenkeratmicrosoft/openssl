@@ -17,6 +17,9 @@
 #include "prov/provider_ctx.h"
 #include "serializer_local.h"
 
+#define EC_SELECT_PUBLIC_IMPORTABLE                                            \
+    OSSL_KEYMGMT_SELECT_PUBLIC_KEY | OSSL_KEYMGMT_SELECT_ALL_PARAMETERS
+
 static OSSL_FUNC_serializer_newctx_fn ec_pub_newctx;
 static OSSL_FUNC_serializer_freectx_fn ec_pub_freectx;
 static OSSL_FUNC_serializer_serialize_data_fn ec_pub_der_data;
@@ -57,8 +60,8 @@ static int ec_pub_der_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* vctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
-            && ec_import(eckey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
+            && ec_import(eckey, EC_SELECT_PUBLIC_IMPORTABLE, params)
             && ec_pub_der(vctx, eckey, out, cb, cbarg))
             ok = 1;
         ec_free(eckey);
@@ -99,8 +102,8 @@ static int ec_pub_pem_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* ctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
-            && ec_import(eckey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
+            && ec_import(eckey, EC_SELECT_PUBLIC_IMPORTABLE, params)
             && ec_pub_pem(vctx, eckey, out, cb, cbarg))
             ok = 1;
         ec_free(eckey);
@@ -140,8 +143,8 @@ static int ec_pub_print_data(void *vctx, const OSSL_PARAM params[],
         EC_KEY *eckey;
 
         /* ctx == provctx */
-        if ((eckey = ec_new(vctx)) != NULL
-            && ec_import(eckey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((eckey = (EC_KEY *)ec_new(vctx)) != NULL
+            && ec_import(eckey, EC_SELECT_PUBLIC_IMPORTABLE, params)
             && ec_pub_print(vctx, eckey, out, cb, cbarg))
             ok = 1;
         ec_free(eckey);
