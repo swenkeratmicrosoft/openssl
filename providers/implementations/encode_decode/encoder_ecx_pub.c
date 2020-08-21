@@ -92,8 +92,8 @@ static int ecx_pub_der_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx->provctx)) != NULL
-            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx->provctx)) != NULL
+            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_PUBLIC_KEY, params)
             && ecx_pub_der(ctx, ecxkey, out, cb, cbarg))
             ok = 1;
         ecx_free(ecxkey);
@@ -136,8 +136,8 @@ static int ecx_pub_pem_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx->provctx)) != NULL
-            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx->provctx)) != NULL
+            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_PUBLIC_KEY, params)
             && ecx_pub_pem(ctx, ecxkey, out, cb, cbarg))
             ok = 1;
         ecx_free(ecxkey);
@@ -179,8 +179,8 @@ static int ecx_pub_print_data(void *vctx, const OSSL_PARAM params[],
     if (ecx_import != NULL) {
         ECX_KEY *ecxkey;
 
-        if ((ecxkey = ecx_new(ctx)) != NULL
-            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((ecxkey = (ECX_KEY *)ecx_new(ctx)) != NULL
+            && ecx_import(ecxkey, OSSL_KEYMGMT_SELECT_PUBLIC_KEY, params)
             && ecx_pub_print(ctx, ecxkey, out, cb, cbarg))
             ok = 1;
         ecx_free(ecxkey);
