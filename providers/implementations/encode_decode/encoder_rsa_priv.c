@@ -28,6 +28,9 @@
 #include "prov/provider_ctx.h"
 #include "encoder_local.h"
 
+#define RSA_SELECT_PRIVATE_IMPORTABLE                                          \
+    (OSSL_KEYMGMT_SELECT_KEYPAIR | OSSL_KEYMGMT_SELECT_OTHER_PARAMETERS)
+
 static OSSL_FUNC_encoder_newctx_fn rsa_priv_newctx;
 static OSSL_FUNC_encoder_freectx_fn rsa_priv_freectx;
 static OSSL_FUNC_encoder_set_ctx_params_fn rsa_priv_set_ctx_params;
@@ -133,8 +136,8 @@ static int rsa_priv_der_data(void *vctx, const OSSL_PARAM params[],
     if (rsa_import != NULL) {
         RSA *rsa;
 
-        if ((rsa = rsa_new(ctx->provctx)) != NULL
-            && rsa_import(rsa, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((rsa = (RSA *)rsa_new(ctx->provctx)) != NULL
+            && rsa_import(rsa, RSA_SELECT_PRIVATE_IMPORTABLE, params)
             && rsa_priv_der(ctx, rsa, out, cb, cbarg))
             ok = 1;
         rsa_free(rsa);
@@ -179,8 +182,8 @@ static int rsa_pem_priv_data(void *vctx, const OSSL_PARAM params[],
     if (rsa_import != NULL) {
         RSA *rsa;
 
-        if ((rsa = rsa_new(ctx->provctx)) != NULL
-            && rsa_import(rsa, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((rsa = (RSA *)rsa_new(ctx->provctx)) != NULL
+            && rsa_import(rsa, RSA_SELECT_PRIVATE_IMPORTABLE, params)
             && rsa_pem_priv(ctx, rsa, out, cb, cbarg))
             ok = 1;
         rsa_free(rsa);
@@ -236,8 +239,8 @@ static int rsa_priv_print_data(void *vctx, const OSSL_PARAM params[],
     if (rsa_import != NULL) {
         RSA *rsa;
 
-        if ((rsa = rsa_new(ctx->provctx)) != NULL
-            && rsa_import(rsa, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((rsa = (RSA *)rsa_new(ctx->provctx)) != NULL
+            && rsa_import(rsa, RSA_SELECT_PRIVATE_IMPORTABLE, params)
             && rsa_priv_print(ctx, rsa, out, cb, cbarg))
             ok = 1;
         rsa_free(rsa);
