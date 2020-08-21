@@ -25,6 +25,9 @@
 #include "prov/provider_ctx.h"
 #include "encoder_local.h"
 
+#define DH_SELECT_PRIVATE_IMPORTABLE                                           \
+    (OSSL_KEYMGMT_SELECT_KEYPAIR | OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS)
+
 static OSSL_FUNC_encoder_newctx_fn dh_priv_newctx;
 static OSSL_FUNC_encoder_freectx_fn dh_priv_freectx;
 static OSSL_FUNC_encoder_set_ctx_params_fn dh_priv_set_ctx_params;
@@ -131,8 +134,8 @@ static int dh_priv_der_data(void *vctx, const OSSL_PARAM params[],
     if (dh_import != NULL) {
         DH *dh;
 
-        if ((dh = dh_new(ctx->provctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((dh = (DH *)dh_new(ctx->provctx)) != NULL
+            && dh_import(dh, DH_SELECT_PRIVATE_IMPORTABLE, params)
             && dh_priv_der(ctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);
@@ -177,8 +180,8 @@ static int dh_pem_priv_data(void *vctx, const OSSL_PARAM params[],
     if (dh_import != NULL) {
         DH *dh;
 
-        if ((dh = dh_new(ctx->provctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((dh = (DH *)dh_new(ctx->provctx)) != NULL
+            && dh_import(dh, DH_SELECT_PRIVATE_IMPORTABLE, params)
             && dh_pem_priv(ctx->provctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);
@@ -234,8 +237,8 @@ static int dh_priv_print_data(void *vctx, const OSSL_PARAM params[],
     if (dh_import != NULL) {
         DH *dh;
 
-        if ((dh = dh_new(ctx->provctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_KEYPAIR, params)
+        if ((dh = (DH *)dh_new(ctx->provctx)) != NULL
+            && dh_import(dh, DH_SELECT_PRIVATE_IMPORTABLE, params)
             && dh_priv_print(ctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);

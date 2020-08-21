@@ -62,8 +62,8 @@ static int dh_param_der_data(void *ctx, const OSSL_PARAM params[],
         DH *dh;
 
         /* ctx == provctx */
-        if ((dh = dh_new(ctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
+        if ((dh = (DH *)dh_new(ctx)) != NULL
+            && dh_import(dh, OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS, params)
             && dh_param_der(ctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);
@@ -99,8 +99,8 @@ static int dh_param_pem_data(void *ctx, const OSSL_PARAM params[],
         DH *dh;
 
         /* ctx == provctx */
-        if ((dh = dh_new(ctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
+        if ((dh = (DH *)dh_new(ctx)) != NULL
+            && dh_import(dh, OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS, params)
             && dh_param_pem(ctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);
@@ -136,8 +136,8 @@ static int dh_param_print_data(void *ctx, const OSSL_PARAM params[],
         DH *dh;
 
         /* ctx == provctx */
-        if ((dh = dh_new(ctx)) != NULL
-            && dh_import(dh, OSSL_KEYMGMT_SELECT_ALL_PARAMETERS, params)
+        if ((dh = (DH *)dh_new(ctx)) != NULL
+            && dh_import(dh, OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS, params)
             && dh_param_print(ctx, dh, out, cb, cbarg))
             ok = 1;
         dh_free(dh);
